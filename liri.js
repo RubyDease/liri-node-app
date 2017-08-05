@@ -1,58 +1,88 @@
-var request = require("request");
-var requestedMovie = process.argv[2];
+switch (expr) {
+    case 'movie-this':
+        output += 'would you like to look for a movie?';
+        return (movieThis);
+        break;
+    case 'My-Tweets':
+        output += 'would you like to see my last tweets';
+        break;
+    case 'Spotify-this-song':
+        output += 'would you like to look for a song?';
+        break;
 
-//  run a request to the OMDB API with the movie specified
-request(" http://www.omdbapi.com/?i=tt3896198&apikey=3a3447f7", function(error, response, body) {
+}
 
-    // If the request is successful (i.e. if the response status code is 200)
-    if (!error && response.statusCode === 200) {
+// -------------first function-----------------//
 
-        console.log(JSON.parse(body).Rated);
+function movieThis() {
+    const omdb = require('omdbapi');
+    var requestedMovie = process.argv[2];
 
-        // Parse the body of the site and recover just the imdbRating
-        // (Note: The syntax below for parsing isn't obvious. Just spend a few moments dissecting it).
-        console.log("The movie's rating is: " + JSON.parse(body).imdbRating);
-        process.exit(0);
-    }
+    // run a request to the OMDB API with the movie specified
+    request(" http://www.omdbapi.com/?i=tt3896198&apikey=3a3447f7", function(error, movie) {
 
-});
+        omdb.get({
+            id: 'tt0485947',
+            title: 'Mr. Nobody',
+            type: 'movie',
+            plot: 'full',
+            tomatoes: true,
+            year: '2009'
+        }).then(res => {
+            console.log('got response:', res);
+        }).catch(console.error);
 
+
+    })
+
+};
+// call the function 
+movieThis();
 
 //=============================================================================================
-// twiter application
 
+// twiter application using API key
 
-var Twitter = require('twitter');
+function myTweets() {
 
-var client = new Twitter({
-    consumer_key: 'oZEMB4iDN31BElciZJit6rUdv',
-    consumer_secret: 'N6783yn43qMNa5ekcAmC606gCv8Nu42lTI5U6KdRUgJWlbSwZb',
-    access_token_key: '892143535662694405-bzu0aARqiYaibfpfPN3mfrsTY6Haxg7',
-    access_token_secret: 'kXrp7EsVVvmuB2mGWqhuRQiryF8Qo8Rs78VzUDwEDiqUB',
-});
+    var Twitter = require('twitter');
+    // request keys
+    var keys = require('./keys.js');
 
-var params = { screen_name: 'nodejs' };
-client.get('statuses/user_timeline', params, function(error, tweets, response) {
-    if (!error) {
-        console.log(tweets);
-        process.exit(0);
-    }
-});
+    var client = new Twitter(keys.twitterKeys);
+    // call back tweets 
+    var params = { screen_name: 'nodejs' };
+    client.stream('statuses/user_timeline', params, function(error, tweets) {
+        if (err) {
+            return console.log('Error occurred: ' + err);
+        }
+        // call the function show my tweets
+        console.log(myTweets);
+    });
+}
 
 //======================================================
-// spotify application using API
+// spotify application using APIkey
 
-var spotify = require('node-spotify-api');
-var spotify = new Spotify({
-    id: 'b2a51e2b7ba24a44b88c8ca2384840fa',
-    secret: '7f7b281f873d4ccc92e9346a4e50a653',
-});
+var songName = process.argv[2];
 
-spotify.search({ type: 'track', query: 'All the Small Things' }, function(err, data) {
-    if (err) {
-        return console.log('Error occurred: ' + err);
-    }
+function spotifyThisSong(songName) {
+    var Spotify = require('node-spotify-api');
+    var spotify = new Spotify({
+        id: 'b2a51e2b7ba24a44b88c8ca2384840fa',
+        secret: '7f7b281f873d4ccc92e9346a4e50a653',
+    });
 
-    console.log(data);
-    process.exit(0);
-})
+    var songName = songName;
+
+    spotify.search({ type: 'track', query: songName }, function(err, data) {
+        if (err) {
+            return console.log('Error occurred: ' + err);
+        }
+
+        console.log(data.tracks.items);
+
+    });
+};
+// calling the function
+spotifyThisSong(songName)

@@ -21,6 +21,7 @@
   "homepage": "https://github.com/RubyDease/liri-node-app#readme",
   "dependencies": {
     "node-spotify-api": "^1.0.6",
+    "omdbapi": "^2.0.1",
     "twit": "^2.2.9",
     "twitter": "^1.7.1"
   }
